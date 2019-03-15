@@ -121,8 +121,6 @@ function renderMainGrid() {
     const parent = document.getElementById("grid");
     const columnDivs = getColumns();
     parent.innerHTML = '<div class="columnsStyle">' + columnDivs + '</div>';
-
-    checkIfSomeoneWon();
 }
 
 function onBoxClick() {
@@ -193,6 +191,15 @@ function computersTurn() {
  */
 function incrementTurns() {
     numberOfTurns++;
+
+    // First check if someone won the game
+    checkIfSomeoneWon();
+
+    if (gameState == 2) {
+        return false;
+    }
+
+    // Next check if all the cells are filled up with no conclusion
     if (numberOfTurns == GRID_LENGTH * GRID_LENGTH) {
         gameOver(false);
     }
@@ -263,14 +270,19 @@ function removeClickHandlers() {
  * This function displays the winner
  */
 function paintWinner(player) {
-    console.log(player);
+    setTimeout(function() {
+        document.getElementById("player").innerHTML = player;
+        document.getElementById("winner").className += " show";
+    }, 300);
 }
 
 /**
  * This function displays draw
  */
 function paintDraw() {
-    console.log("Match drawn.");
+    setTimeout(function() {
+        document.getElementById("draw").className += " show";
+    }, 300);
 }
 
 initializeGrid();

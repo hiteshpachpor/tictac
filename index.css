@@ -1,10 +1,18 @@
-.parentTop{
+body {
+    font-family: 'Fredoka One', cursive;
+}
+
+h1 {
+    font-weight: normal;
+}
+
+.parentTop {
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.gridTop{
+.gridTop {
     border-color: "#f44336";
     border: '1px solid red';
     display: flex;
@@ -12,7 +20,7 @@
 }
 
 .lightBackground {
-    background-color: 00FFFF
+    background-color: #00FFFF;
 }
 
 .columnsStyle {
@@ -25,12 +33,12 @@
 }
 
 .darkBackground {
-    background-color: F0FFFF
+    background-color: #F0FFFF;
 }
 
 .box {
-    width: 100;
-    height: 100;
+    width: 100px;
+    height: 100px;
     cursor: pointer;
     display: flex;
     justify-content: center;
@@ -44,7 +52,7 @@
     margin-bottom: 100px;
 }
 
-.cross{
+.cross {
     color: #f90;
     font-size: 2.5em;
     border-radius: 5px;

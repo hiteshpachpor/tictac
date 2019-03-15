@@ -45,6 +45,12 @@ const winSequenceOfPlayers = {
 // Store the win routes here
 let winRoutes = [];
 
+// Track the Player's progress on the various win routes
+let winRouteProgress = [];
+
+// Make the Computer a little more smarter
+let defensiveMode = true;
+
 /**
  * There are a total of 8 combinations through which one can win:
  * 3 rows
@@ -72,6 +78,8 @@ let winRoutes = [];
 
     winRoutes.push(leftDiagonalPath);
     winRoutes.push(rightDiagonalPath);
+
+    winRouteProgress = Array(winRoutes.length);
 })();
 
 function initializeGrid() {
@@ -169,9 +177,26 @@ function computersTurn() {
         return;
     }
 
-    // Randomly select indexes for a cell
+    // First randomly select indexes for a cell
     let rx = Math.round(Math.random() * (GRID_LENGTH - 1));
     let ry = Math.round(Math.random() * (GRID_LENGTH - 1));
+
+    // If defensive mode is on, find the riskiest cell to fill, if any, and overwrite it
+    if (defensiveMode) {
+        let riskyRoute = findRiskyRoute();
+
+        // If computer does not fill this cell, it might lose
+        if (riskyRoute) {
+            // Find the empty cell that computer should fill
+            for (let c in riskyRoute) {
+                let emptyCell = riskyRoute[c];
+                if (grid[emptyCell[0]][emptyCell[1]] === 0) {
+                    rx = emptyCell[0];
+                    ry = emptyCell[1];
+                }
+            }
+        }
+    }
 
     // If the cell is already filled, try again
     if (grid[rx][ry] != 0) {
@@ -184,6 +209,38 @@ function computersTurn() {
     incrementTurns();
     renderMainGrid();
     computerIsPlaying = false;
+}
+
+/**
+ * This function finds the cell that the computer must fill to stay in the game
+ */
+function findRiskyRoute() {
+    // Iterate over all winnable routes to update the current progress of player on each route
+    for (let i in winRoutes) {
+        let route = winRoutes[i];
+        winRouteProgress[i] = 0;
+
+        for (let r in route) {
+            let c = route[r];
+
+            if (grid[c[0]][c[1]] === 1) {
+                winRouteProgress[i]++;
+            }
+
+            if (grid[c[0]][c[1]] === 2) {
+                winRouteProgress[i]--;
+            }
+        }
+    }
+
+    // Return the first route where 2 cells are filled by player and one is empty
+    for (let p in winRouteProgress) {
+        if (winRouteProgress[p] == 2) {
+            return winRoutes[p];
+        }
+    }
+
+    return false;
 }
 
 /**

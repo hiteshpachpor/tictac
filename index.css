@@ -1,6 +1,6 @@
 body {
     font-family: 'Fredoka One', cursive;
-    color: #333;
+    color: #54460c;
 }
 
 h1 {
@@ -22,7 +22,7 @@ h1 {
 }
 
 .lightBackground {
-    background-color: #00FFFF;
+    background-color: #ffd31b;
 }
 
 .columnsStyle {
@@ -35,7 +35,7 @@ h1 {
 }
 
 .darkBackground {
-    background-color: #F0FFFF;
+    background-color: #fffae6;
 }
 
 .box {
@@ -55,7 +55,7 @@ h1 {
 }
 
 .cross {
-    color: #f90;
+    color: #54460c;
     font-size: 2.5em;
     border-radius: 5px;
     line-height: 100px;
@@ -102,7 +102,7 @@ h1 {
 }
 
 .button:hover {
-    color: #FFF;
-    background-color: #333;
-    border: 2px solid #333;
+    color: #fffae6;
+    background-color: #54460c;
+    border: 2px solid #54460c;
 }

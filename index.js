@@ -118,7 +118,7 @@ function getRowBoxes(colIdx) {
         else if (gridValue === _COMPUTER) {
             content = '<span class="cross">O</span>';
         }
-        rowDivs = rowDivs + '<div colIdx="'+ colIdx +'" rowIdx="' + rowIdx + '" class="box ' +
+        rowDivs = rowDivs + '<div id="cell_' + colIdx + rowIdx + '" colIdx="'+ colIdx +'" rowIdx="' + rowIdx + '" class="box ' +
             additionalClass + '">' + content + '</div>';
     }
     return rowDivs;
@@ -159,8 +159,8 @@ function onBoxClick() {
 
     let newValue = _PLAYER;
     grid[colIdx][rowIdx] = newValue;
-    incrementTurns();
     renderMainGrid();
+    incrementTurns();
 
     // To add a more realistic feel to the game,
     // add a small delay before the computer plays his cell.
@@ -222,8 +222,8 @@ function computersTurn() {
 
     grid[rx][ry] = _COMPUTER;
 
-    incrementTurns();
     renderMainGrid();
+    incrementTurns();
     computerIsPlaying = false;
 }
 
@@ -298,7 +298,7 @@ function checkIfSomeoneWon() {
             // If the win sequence matches with any of the routes,
             // this player has won the game
             if (currentStateOfRoute == winSequenceOfPlayers[player]) {
-                gameOver(true, player);
+                gameOver(true, player, route);
                 return;
             }
         }
@@ -318,12 +318,27 @@ function gameStarted() {
  * This function is called when the game is finished
  * either by winning or playing out a draw
  */
-function gameOver(gameWon, player) {
+function gameOver(gameWon, player, route) {
     gameState = 2;
     removeClickHandlers();
 
     if (gameWon) {
-        paintWinner(player);
+        setTimeout(function() {
+            paintWinner(player);
+        }, 2000);
+
+        if (route) {
+            for (var r in route) {
+                let coordinates = route[r];
+                let cell = document.getElementById("cell_" + coordinates[0] + coordinates[1]).className += " win_route_cell";
+
+                if (cell) {
+                    cell.className += " win_route_cell";
+                }
+            }
+
+            document.getElementById("grid").className += " won";
+        }
     } else {
         paintDraw();
     }

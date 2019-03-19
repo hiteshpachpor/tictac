@@ -15,8 +15,6 @@ h1 {
 }
 
 .gridTop {
-    border-color: "#f44336";
-    border: '1px solid red';
     display: flex;
     flex-direction: column;
 }
@@ -105,4 +103,26 @@ h1 {
     color: #fffae6;
     background-color: #54460c;
     border: 2px solid #54460c;
+}
+
+.grid.won .cross {
+    color: #54460c50;
+}
+
+.grid.won .win_route_cell .cross {
+    color: #54460c;
+    -webkit-animation: pulsate 1s ease-out;
+    -webkit-animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes pulsate {
+    0% {
+        -webkit-transform: scale(1.0, 1.0);
+    }
+    50% {
+        -webkit-transform: scale(1.25, 1.25);
+    }
+    100% {
+        -webkit-transform: scale(1.0, 1.0);
+    }
 }

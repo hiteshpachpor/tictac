@@ -18,8 +18,11 @@
 */
 
 const grid = [];
-const GRID_LENGTH = 3;
+const GRID_LENGTH = 5;
 let turn = 'X';
+
+let _PLAYER = 1;
+let _COMPUTER = 2;
 
 /**
  * We will store the state of the game in a variable.
@@ -38,8 +41,8 @@ let computerIsPlaying = false;
 
 // This sequence tells us which player won the game
 const winSequenceOfPlayers = {
-    "Player"   : String.prototype.padStart(GRID_LENGTH, "1"),
-    "Computer" : String.prototype.padStart(GRID_LENGTH, "2")
+    "Player"   : String.prototype.padStart(GRID_LENGTH, _PLAYER),
+    "Computer" : String.prototype.padStart(GRID_LENGTH, _COMPUTER)
 };
 
 // Store the win routes here
@@ -108,10 +111,10 @@ function getRowBoxes(colIdx) {
             additionalClass = 'lightBackground'
         }
         const gridValue = grid[colIdx][rowIdx];
-        if(gridValue === 1) {
+        if(gridValue === _PLAYER) {
             content = '<span class="cross">X</span>';
         }
-        else if (gridValue === 2) {
+        else if (gridValue === _COMPUTER) {
             content = '<span class="cross">O</span>';
         }
         rowDivs = rowDivs + '<div colIdx="'+ colIdx +'" rowIdx="' + rowIdx + '" class="box ' +
@@ -153,7 +156,7 @@ function onBoxClick() {
         return false;
     }
 
-    let newValue = 1;
+    let newValue = _PLAYER;
     grid[colIdx][rowIdx] = newValue;
     incrementTurns();
     renderMainGrid();
@@ -209,7 +212,7 @@ function computersTurn() {
         return;
     }
 
-    grid[rx][ry] = 2;
+    grid[rx][ry] = _COMPUTER;
 
     incrementTurns();
     renderMainGrid();
@@ -228,11 +231,11 @@ function findRiskyRoute() {
         for (let r in route) {
             let c = route[r];
 
-            if (grid[c[0]][c[1]] === 1) {
+            if (grid[c[0]][c[1]] === _PLAYER) {
                 winRouteProgress[i]++;
             }
 
-            if (grid[c[0]][c[1]] === 2) {
+            if (grid[c[0]][c[1]] === _COMPUTER) {
                 winRouteProgress[i]--;
             }
         }

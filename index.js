@@ -38,8 +38,8 @@ let computerIsPlaying = false;
 
 // This sequence tells us which player won the game
 const winSequenceOfPlayers = {
-    "Player": "111",
-    "Computer": "222"
+    "Player"   : String.prototype.padStart(GRID_LENGTH, "1"),
+    "Computer" : String.prototype.padStart(GRID_LENGTH, "2")
 };
 
 // Store the win routes here
@@ -59,7 +59,10 @@ let defensiveMode = true;
  *
  * This function creates a list of all these routes.
  */
-(function() {
+let createWinRoutes = function() {
+    let leftDiagonalPath = [];
+    let rightDiagonalPath = [];
+
     for (let m = 0; m < GRID_LENGTH; m++) {
         let verticalPath = [];
         let horizontalPath = [];
@@ -69,18 +72,20 @@ let defensiveMode = true;
             horizontalPath.push([n, m]);
         }
 
+        leftDiagonalPath.push([m, m]);
+        rightDiagonalPath.push([GRID_LENGTH - 1 - m, m]);
+
         winRoutes.push(verticalPath);
         winRoutes.push(horizontalPath);
     }
-
-    leftDiagonalPath = [ [ 0, 0 ], [ 1, 1 ], [ 2, 2 ] ];
-    rightDiagonalPath = [ [ 0, 2 ], [ 1, 1 ], [ 2, 0 ] ];
 
     winRoutes.push(leftDiagonalPath);
     winRoutes.push(rightDiagonalPath);
 
     winRouteProgress = Array(winRoutes.length);
-})();
+};
+
+createWinRoutes();
 
 function initializeGrid() {
     for (let colIdx = 0;colIdx < GRID_LENGTH; colIdx++) {
@@ -235,7 +240,7 @@ function findRiskyRoute() {
 
     // Return the first route where 2 cells are filled by player and one is empty
     for (let p in winRouteProgress) {
-        if (winRouteProgress[p] == 2) {
+        if (winRouteProgress[p] == (GRID_LENGTH - 1)) {
             return winRoutes[p];
         }
     }

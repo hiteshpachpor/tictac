@@ -18,7 +18,7 @@
 */
 
 const grid = [];
-const GRID_LENGTH = 5;
+const GRID_LENGTH = 3;
 let turn = 'X';
 
 let _PLAYER = 1;
@@ -53,6 +53,7 @@ let winRouteProgress = [];
 
 // Make the Computer a little more smarter
 let defensiveMode = true;
+let attackingMode = true;
 
 /**
  * There are a total of 8 combinations through which one can win:
@@ -189,19 +190,26 @@ function computersTurn() {
     let rx = Math.round(Math.random() * (GRID_LENGTH - 1));
     let ry = Math.round(Math.random() * (GRID_LENGTH - 1));
 
-    // If defensive mode is on, find the riskiest cell to fill, if any, and overwrite it
-    if (defensiveMode) {
-        let riskyRoute = findRiskyRoute();
+    let potentialWinningRouteFound = false;
 
-        // If computer does not fill this cell, it might lose
-        if (riskyRoute) {
-            // Find the empty cell that computer should fill
-            for (let c in riskyRoute) {
-                let emptyCell = riskyRoute[c];
-                if (grid[emptyCell[0]][emptyCell[1]] === 0) {
-                    rx = emptyCell[0];
-                    ry = emptyCell[1];
-                }
+    // If attacking mode is on, if there's a chance for the computer to win, take it
+    if (attackingMode && !potentialWinningRouteFound) {
+        potentialWinningRouteFound = findPotentialWinningRoute(_COMPUTER, _PLAYER);
+    }
+
+    // If defensive mode is on, if there's a chance for the user to win, deny it
+    if (defensiveMode && !potentialWinningRouteFound) {
+        potentialWinningRouteFound = findPotentialWinningRoute(_PLAYER, _COMPUTER);
+    }
+
+    // If a potential winning route is found, computer needs to fill it
+    if (potentialWinningRouteFound) {
+        // Find the empty cell that computer should fill
+        for (let c in potentialWinningRouteFound) {
+            let emptyCell = potentialWinningRouteFound[c];
+            if (grid[emptyCell[0]][emptyCell[1]] === 0) {
+                rx = emptyCell[0];
+                ry = emptyCell[1];
             }
         }
     }
@@ -222,7 +230,7 @@ function computersTurn() {
 /**
  * This function finds the cell that the computer must fill to stay in the game
  */
-function findRiskyRoute() {
+function findPotentialWinningRoute(opponent, itself) {
     // Iterate over all winnable routes to update the current progress of player on each route
     for (let i in winRoutes) {
         let route = winRoutes[i];
@@ -231,11 +239,11 @@ function findRiskyRoute() {
         for (let r in route) {
             let c = route[r];
 
-            if (grid[c[0]][c[1]] === _PLAYER) {
+            if (grid[c[0]][c[1]] === opponent) {
                 winRouteProgress[i]++;
             }
 
-            if (grid[c[0]][c[1]] === _COMPUTER) {
+            if (grid[c[0]][c[1]] === itself) {
                 winRouteProgress[i]--;
             }
         }

@@ -21,6 +21,7 @@ const grid = [];
 const GRID_LENGTH = 3;
 let turn = 'X';
 
+let _EMPTY_CELL = 0;
 let _PLAYER = 1;
 let _COMPUTER = 2;
 
@@ -59,6 +60,10 @@ let winRoutes = [];
 
 // Track the Player's progress on the various win routes
 let winRouteProgress = [];
+
+let cellWeight = {};
+let weightPool = {};
+let weightNumbers = [];
 
 // Make the Computer a little more smarter
 let defensiveMode = true;
@@ -100,11 +105,50 @@ let createWinRoutes = function() {
 
 createWinRoutes();
 
+let calculateCellWeight = function() {
+    for (let i in winRoutes) {
+        let route = winRoutes[i];
+
+        for (let r in route) {
+            let cell = route[r];
+
+            let cellXCoordinate = cell[X_COORDINATE];
+            let cellYCoordinate = cell[Y_COORDINATE];
+
+            if (!cellWeight[cellXCoordinate]) {
+                cellWeight[cellXCoordinate] = {};
+            }
+
+            if (!cellWeight[cellXCoordinate][cellYCoordinate]) {
+                cellWeight[cellXCoordinate][cellYCoordinate] = 1;
+            } else {
+                cellWeight[cellXCoordinate][cellYCoordinate]++;
+            }
+        }
+    }
+
+    for (let xCoordinate = 0; xCoordinate < GRID_LENGTH; xCoordinate++) {
+        for (let yCoordinate = 0; yCoordinate < GRID_LENGTH; yCoordinate++) {
+            let weight = cellWeight[xCoordinate][yCoordinate];
+
+            if (!weightPool[weight]) {
+                weightPool[weight] = [];
+            }
+
+            weightPool[weight].push([ xCoordinate, yCoordinate ]);
+        }
+    }
+
+    weightNumbers = Object.keys(weightPool).sort().reverse();
+};
+
+calculateCellWeight();
+
 function initializeGrid() {
     for (let colIdx = 0;colIdx < GRID_LENGTH; colIdx++) {
         const tempArray = [];
         for (let rowidx = 0; rowidx < GRID_LENGTH;rowidx++) {
-            tempArray.push(0);
+            tempArray.push(_EMPTY_CELL);
         }
         grid.push(tempArray);
     }
@@ -175,7 +219,7 @@ function onBoxClick() {
     // add a small delay before the computer plays his cell.
     computerIsPlaying = true;
     setTimeout(function() {
-        computersTurn();
+        computersTurn(colIdx, rowIdx);
         addClickHandlers();
     }, 500);
 }
@@ -190,7 +234,7 @@ function addClickHandlers() {
 /**
  * This function plays a cell on computer's behalf
  */
-function computersTurn() {
+function computersTurn(playerCellX, playerCellY) {
     if (gameState != GAME_STATES.IN_PROGRESS) {
         return;
     }
@@ -220,16 +264,36 @@ function computersTurn() {
             let emptyCellXCoordinate = emptyCell[X_COORDINATE];
             let emptyCellYCoordinate = emptyCell[Y_COORDINATE];
 
-            if (grid[emptyCellXCoordinate][emptyCellYCoordinate] === 0) {
+            if (grid[emptyCellXCoordinate][emptyCellYCoordinate] === _EMPTY_CELL) {
                 rx = emptyCellXCoordinate;
                 ry = emptyCellYCoordinate;
+            }
+        }
+    } else {
+        // Try to find the most eligible cell to fill
+        let weightOfCell = cellWeight[playerCellX][playerCellY];
+        let weightPoolToTarget = 0;
+
+        entire_loop:
+        for (let n in weightNumbers) {
+            weightPoolToTarget = weightNumbers[n];
+            let cellsInWeightPool = weightPool[weightPoolToTarget];
+
+            for (let p in cellsInWeightPool) {
+                let _cell = cellsInWeightPool[p];
+
+                if (grid[_cell[X_COORDINATE]][_cell[Y_COORDINATE]] == _EMPTY_CELL) {
+                    rx = _cell[X_COORDINATE];
+                    ry = _cell[Y_COORDINATE];
+                    break entire_loop;
+                }
             }
         }
     }
 
     // If the cell is already filled, try again
-    if (grid[rx][ry] != 0) {
-        computersTurn();
+    if (grid[rx][ry] != _EMPTY_CELL) {
+        computersTurn(playerCellX, playerCellY);
         return;
     }
 

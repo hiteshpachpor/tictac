@@ -34,7 +34,13 @@ const Y_COORDINATE = 1;
  * 1 = In progress
  * 2 = Finished
  */
-let gameState = 0;
+const GAME_STATES = {
+    YET_TO_START : 0,
+    IN_PROGRESS  : 1,
+    FINISHED     : 2
+};
+
+let gameState = GAME_STATES.YET_TO_START;
 
 // Counter to maintain the number of turns taken
 let numberOfTurns = 0;
@@ -185,7 +191,7 @@ function addClickHandlers() {
  * This function plays a cell on computer's behalf
  */
 function computersTurn() {
-    if (gameState != 1) {
+    if (gameState != GAME_STATES.IN_PROGRESS) {
         return;
     }
 
@@ -278,7 +284,7 @@ function incrementTurns() {
     // First check if someone won the game
     checkIfSomeoneWon();
 
-    if (gameState == 2) {
+    if (gameState == GAME_STATES.FINISHED) {
         return false;
     }
 
@@ -323,8 +329,8 @@ function checkIfSomeoneWon() {
  * This function is called when the game is started by the user
  */
 function gameStarted() {
-    if (gameState === 0) {
-        gameState = 1;
+    if (gameState === GAME_STATES.YET_TO_START) {
+        gameState = GAME_STATES.IN_PROGRESS;
     }
 }
 
@@ -333,7 +339,7 @@ function gameStarted() {
  * either by winning or playing out a draw
  */
 function gameOver(gameWon, player, route) {
-    gameState = 2;
+    gameState = GAME_STATES.FINISHED;
     removeClickHandlers();
 
     if (gameWon) {

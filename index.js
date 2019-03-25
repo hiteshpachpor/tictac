@@ -24,6 +24,9 @@ let turn = 'X';
 let _PLAYER = 1;
 let _COMPUTER = 2;
 
+const X_COORDINATE = 0;
+const Y_COORDINATE = 1;
+
 /**
  * We will store the state of the game in a variable.
  *
@@ -207,9 +210,13 @@ function computersTurn() {
         // Find the empty cell that computer should fill
         for (let c in potentialWinningRouteFound) {
             let emptyCell = potentialWinningRouteFound[c];
-            if (grid[emptyCell[0]][emptyCell[1]] === 0) {
-                rx = emptyCell[0];
-                ry = emptyCell[1];
+
+            let emptyCellXCoordinate = emptyCell[X_COORDINATE];
+            let emptyCellYCoordinate = emptyCell[Y_COORDINATE];
+
+            if (grid[emptyCellXCoordinate][emptyCellYCoordinate] === 0) {
+                rx = emptyCellXCoordinate;
+                ry = emptyCellYCoordinate;
             }
         }
     }
@@ -237,13 +244,16 @@ function findPotentialWinningRoute(opponent, itself) {
         winRouteProgress[i] = 0;
 
         for (let r in route) {
-            let c = route[r];
+            let cell = route[r];
 
-            if (grid[c[0]][c[1]] === opponent) {
+            let cellXCoordinate = cell[X_COORDINATE];
+            let cellYCoordinate = cell[Y_COORDINATE];
+
+            if (grid[cellXCoordinate][cellYCoordinate] === opponent) {
                 winRouteProgress[i]++;
             }
 
-            if (grid[c[0]][c[1]] === itself) {
+            if (grid[cellXCoordinate][cellYCoordinate] === itself) {
                 winRouteProgress[i]--;
             }
         }
@@ -289,8 +299,12 @@ function checkIfSomeoneWon() {
         // Join all the nodes in this route to form a string
         let currentStateOfRoute = "";
         for (let r in route) {
-            let c = route[r];
-            currentStateOfRoute = currentStateOfRoute + "" + grid[c[0]][c[1]];
+            let cell = route[r];
+
+            let cellXCoordinate = cell[X_COORDINATE];
+            let cellYCoordinate = cell[Y_COORDINATE];
+
+            currentStateOfRoute = currentStateOfRoute + "" + grid[cellXCoordinate][cellYCoordinate];
         }
 
         // Iterate over the players' win sequence
@@ -330,7 +344,11 @@ function gameOver(gameWon, player, route) {
         if (route) {
             for (var r in route) {
                 let coordinates = route[r];
-                let cell = document.getElementById("cell_" + coordinates[0] + coordinates[1]).className += " win_route_cell";
+
+                let xCoordinate = coordinates[X_COORDINATE];
+                let yCoordinate = coordinates[Y_COORDINATE];
+
+                let cell = document.getElementById("cell_" + xCoordinate + yCoordinate).className += " win_route_cell";
 
                 if (cell) {
                     cell.className += " win_route_cell";

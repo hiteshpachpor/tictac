@@ -298,6 +298,11 @@ function incrementTurns() {
  * This function checks if someone has won the game
  */
 function checkIfSomeoneWon() {
+    // If number of turns per user are less than the length of grid, no point in checking
+    if (numberOfTurns < (2 * GRID_LENGTH - 1)) {
+        return;
+    }
+
     // Iterate over all winnable routes
     for (let i in winRoutes) {
         let route = winRoutes[i];

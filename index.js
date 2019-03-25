@@ -169,7 +169,7 @@ function onBoxClick() {
     let newValue = _PLAYER;
     grid[colIdx][rowIdx] = newValue;
     renderMainGrid();
-    incrementTurns();
+    incrementTurns(colIdx, rowIdx);
 
     // To add a more realistic feel to the game,
     // add a small delay before the computer plays his cell.
@@ -236,7 +236,7 @@ function computersTurn() {
     grid[rx][ry] = _COMPUTER;
 
     renderMainGrid();
-    incrementTurns();
+    incrementTurns(rx, ry);
     computerIsPlaying = false;
 }
 
@@ -278,11 +278,11 @@ function findPotentialWinningRoute(opponent, itself) {
 /**
  * This function increments the number of turns
  */
-function incrementTurns() {
+function incrementTurns(xCoordinate, yCoordinate) {
     numberOfTurns++;
 
     // First check if someone won the game
-    checkIfSomeoneWon();
+    checkIfSomeoneWon(xCoordinate, yCoordinate);
 
     if (gameState == GAME_STATES.FINISHED) {
         return false;
@@ -297,15 +297,22 @@ function incrementTurns() {
 /**
  * This function checks if someone has won the game
  */
-function checkIfSomeoneWon() {
+function checkIfSomeoneWon(xCoordinate, yCoordinate) {
     // If number of turns per user are less than the length of grid, no point in checking
     if (numberOfTurns < (2 * GRID_LENGTH - 1)) {
         return;
     }
 
+    // Ignore all the routes which do not contain the chosen cell
+    let filteredWinRoutes = winRoutes.filter(function(route) {
+        return route.find(function(_cell) {
+            return (_cell[X_COORDINATE] == xCoordinate) && (_cell[Y_COORDINATE] == yCoordinate);
+        });
+    });
+
     // Iterate over all winnable routes
-    for (let i in winRoutes) {
-        let route = winRoutes[i];
+    for (let i in filteredWinRoutes) {
+        let route = filteredWinRoutes[i];
 
         // Join all the nodes in this route to form a string
         let currentStateOfRoute = "";
